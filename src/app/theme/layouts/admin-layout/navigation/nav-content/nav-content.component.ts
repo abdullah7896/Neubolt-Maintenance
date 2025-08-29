@@ -26,7 +26,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-nav-content',
-  imports: [CommonModule, RouterModule, NavGroupComponent, NgScrollbarModule],
+  imports: [CommonModule, RouterModule, NgScrollbarModule],
   templateUrl: './nav-content.component.html',
   styleUrls: ['./nav-content.component.scss']
 })

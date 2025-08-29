@@ -1,111 +1,113 @@
-// angular import
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// project import
-import tableData from 'src/fake-data/default-data.json';
-
-import { MonthlyBarChartComponent } from 'src/app/theme/shared/apexchart/monthly-bar-chart/monthly-bar-chart.component';
-import { IncomeOverviewChartComponent } from 'src/app/theme/shared/apexchart/income-overview-chart/income-overview-chart.component';
-import { AnalyticsChartComponent } from 'src/app/theme/shared/apexchart/analytics-chart/analytics-chart.component';
-import { SalesReportChartComponent } from 'src/app/theme/shared/apexchart/sales-report-chart/sales-report-chart.component';
+import { ComplaintsService, Complaint } from 'src/app/services/complaints.service';
+import { FormsModule } from '@angular/forms';
 
 // icons
-import { IconService, IconDirective } from '@ant-design/icons-angular';
-import { FallOutline, GiftOutline, MessageOutline, RiseOutline, SettingOutline } from '@ant-design/icons-angular/icons';
-import { CardComponent } from 'src/app/theme/shared/components/card/card.component';
+import { IconService } from '@ant-design/icons-angular';
+import { RiseOutline, FallOutline, SettingOutline, GiftOutline, MessageOutline } from '@ant-design/icons-angular/icons';
 
 @Component({
   selector: 'app-default',
-  imports: [
-    CommonModule,
-    CardComponent,
-    IconDirective,
-    MonthlyBarChartComponent,
-    IncomeOverviewChartComponent,
-    AnalyticsChartComponent,
-    SalesReportChartComponent
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.scss']
 })
-export class DefaultComponent {
+export class DefaultComponent implements OnInit {
   private iconService = inject(IconService);
+  private complaintsService = inject(ComplaintsService);
 
-  // constructor
+  complaints: Complaint[] = [];
+  loading = true;
+
+  // All statuses coming from API (for table display only)
+  statuses = ['Pending', 'In-Progress', 'Completed', 'Requested'];
+
+  // Dropdown me "Completed" hide
+  actionStatuses = ['Pending', 'In-Progress', 'Requested'];
+
+  // Alert
+  alertMessage: string | null = null;
+  alertType: 'success' | 'danger' | null = null;
+
+  // Track which complaint dropdown is open
+  dropdownOpenComplaintId: string | null = null;
+
   constructor() {
     this.iconService.addIcon(...[RiseOutline, FallOutline, SettingOutline, GiftOutline, MessageOutline]);
   }
 
-  recentOrder = tableData;
+  ngOnInit(): void {
+    this.fetchComplaints();
+  }
 
-  AnalyticEcommerce = [
-    {
-      title: 'Total Page Views',
-      amount: '4,42,236',
-      background: 'bg-light-primary ',
-      border: 'border-primary',
-      icon: 'rise',
-      percentage: '59.3%',
-      color: 'text-primary',
-      number: '35,000'
-    },
-    {
-      title: 'Total Users',
-      amount: '78,250',
-      background: 'bg-light-primary ',
-      border: 'border-primary',
-      icon: 'rise',
-      percentage: '70.5%',
-      color: 'text-primary',
-      number: '8,900'
-    },
-    {
-      title: 'Total Order',
-      amount: '18,800',
-      background: 'bg-light-warning ',
-      border: 'border-warning',
-      icon: 'fall',
-      percentage: '27.4%',
-      color: 'text-warning',
-      number: '1,943'
-    },
-    {
-      title: 'Total Sales',
-      amount: '$35,078',
-      background: 'bg-light-warning ',
-      border: 'border-warning',
-      icon: 'fall',
-      percentage: '27.4%',
-      color: 'text-warning',
-      number: '$20,395'
-    }
-  ];
+  // Fetch complaints from API
+  fetchComplaints() {
+    this.loading = true;
+    this.complaintsService.getComplaints().subscribe({
+      next: (res: any) => {
+        this.complaints = Array.isArray(res.maintenance_complaints) ? res.maintenance_complaints : [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching complaints:', err);
+        this.loading = false;
+      }
+    });
+  }
 
-  transaction = [
-    {
-      background: 'text-success bg-light-success',
-      icon: 'gift',
-      title: 'Order #002434',
-      time: 'Today, 2:00 AM',
-      amount: '+ $1,430',
-      percentage: '78%'
-    },
-    {
-      background: 'text-primary bg-light-primary',
-      icon: 'message',
-      title: 'Order #984947',
-      time: '5 August, 1:45 PM',
-      amount: '- $302',
-      percentage: '8%'
-    },
-    {
-      background: 'text-danger bg-light-danger',
-      icon: 'setting',
-      title: 'Order #988784',
-      time: '7 hours ago',
-      amount: '- $682',
-      percentage: '16%'
+  // Construct driver image URL
+  getDriverImage(driverImage: string): string {
+    if (!driverImage) return 'https://via.placeholder.com/30';
+    return driverImage.startsWith('http') ? driverImage : `http://203.135.63.46:5000/${driverImage}`;
+  }
+
+  // Toggle dropdown visibility for a complaint
+  toggleDropdown(complaint: Complaint) {
+    this.dropdownOpenComplaintId = this.dropdownOpenComplaintId === complaint.complaint_id ? null : complaint.complaint_id;
+  }
+
+  // Update status from dropdown
+  updateStatusFromDropdown(complaint: Complaint, newStatus: string) {
+    // ❌ Prevent status update if complaint already Completed
+    if (complaint.status === 'Completed') {
+      this.showAlert('Completed complaints cannot be updated.', 'danger');
+      this.dropdownOpenComplaintId = null;
+      return;
     }
-  ];
+
+    complaint.status = newStatus;
+    this.saveStatus(complaint);
+    this.dropdownOpenComplaintId = null; // close dropdown
+  }
+
+  // Save updated status
+  saveStatus(complaint: Complaint) {
+    const updatedComplaint: Complaint = {
+      ...complaint,
+      status_change_time: new Date().toISOString()
+    };
+
+    this.complaintsService.updateComplaint(complaint.complaint_id, updatedComplaint).subscribe({
+      next: () => {
+        complaint.status_change_time = updatedComplaint.status_change_time;
+        this.showAlert(`Status updated to "${complaint.status}" successfully.`, 'success');
+      },
+      error: (err) => {
+        console.error('Error updating complaint:', err);
+        this.showAlert('Failed to update status. Please try again.', 'danger');
+      }
+    });
+  }
+
+  // Show alert
+  showAlert(message: string, type: 'success' | 'danger') {
+    this.alertMessage = message;
+    this.alertType = type;
+    setTimeout(() => {
+      this.alertMessage = null;
+      this.alertType = null;
+    }, 3000);
+  }
 }

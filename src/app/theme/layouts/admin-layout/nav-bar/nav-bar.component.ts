@@ -3,12 +3,11 @@ import { Component, output } from '@angular/core';
 
 // project import
 
-import { NavLeftComponent } from './nav-left/nav-left.component';
-import { NavRightComponent } from './nav-right/nav-right.component';
+
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [NavLeftComponent, NavRightComponent],
+  imports: [],
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss']
 })
