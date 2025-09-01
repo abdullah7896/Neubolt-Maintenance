@@ -13,18 +13,64 @@
         <table class="table table-hover mb-0">
           <thead>
             <tr>
-              <th>Complaint ID</th>
-              <th>Complaint Name</th>
-              <th>Status</th>
-              <th>Driver</th>
-              <th>EV ID</th>
-              <th>Register Time</th>
-              <th>Cnic No</th>
-              <th>Driver No</th>
-              <th>Status Updated</th>
-              <th>Actions</th>
+              <th (click)="sortTable('complaint_id')">
+                Complaint ID
+                <span [style.color]="isSortedColumn('complaint_id') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('complaint_id') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('complaint_name')">
+                Complaint Name
+                <span [style.color]="isSortedColumn('complaint_name') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('complaint_name') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('status')">
+                Status
+                <span [style.color]="isSortedColumn('status') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('status') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('driver_name')">
+                Driver
+                <span [style.color]="isSortedColumn('driver_name') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('driver_name') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('ev_id')">
+                EV ID
+                <span [style.color]="isSortedColumn('ev_id') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('ev_id') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('complaint_register_time')">
+                Register Time
+                <span [style.color]="isSortedColumn('complaint_register_time') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('complaint_register_time') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('driver_cnic')">
+                Cnic No
+                <span [style.color]="isSortedColumn('driver_cnic') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('driver_cnic') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('driver_number')">
+                Driver No
+                <span [style.color]="isSortedColumn('driver_number') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('driver_number') || '↕' }}
+                </span>
+              </th>
+              <th (click)="sortTable('status_change_time')">
+                Status Updated
+                <span [style.color]="isSortedColumn('status_change_time') ? '#000' : '#6c757d'">
+                  {{ getSortIcon('status_change_time') || '↕' }}
+                </span>
+              </th>
+              <th>Change Status</th>
             </tr>
           </thead>
+
           <tbody>
             <tr *ngFor="let complaint of complaints">
               <td>{{ complaint.complaint_id }}</td>
@@ -41,9 +87,9 @@
                   {{ complaint.status }}
                 </span>
               </td>
-
               <td>
-                <img [src]="getDriverImage(complaint.driver_image)" alt="Driver" width="60" height="60"
+                <img [src]="getDriverImage(complaint.driver_image)" 
+                     alt="Driver" width="60" height="60"
                      class="rounded-circle me-2">
                 {{ complaint.driver_name }}
               </td>
@@ -61,14 +107,14 @@
                        width="20" height="20"
                        style="cursor: pointer;"
                        (click)="toggleDropdown(complaint)">
-
-                  <!-- Dropdown menu -->
                   <div class="dropdown-menu" 
                        [class.show]="dropdownOpenComplaintId === complaint.complaint_id"
                        style="position: absolute; top: 100%; right: 0; z-index: 1000;">
-                    <div *ngFor="let s of actionStatuses" class="dropdown-item" 
-                         (click)="updateStatusFromDropdown(complaint, s)">
-                      Change Status to "{{ s }}"
+                    <div *ngFor="let s of actionStatuses" 
+                         class="dropdown-item" 
+                         [class.disabled]="complaint.status === s"
+                         (click)="complaint.status !== s && updateStatusFromDropdown(complaint, s)">
+                      {{ s }}
                     </div>
                   </div>
                 </div>
