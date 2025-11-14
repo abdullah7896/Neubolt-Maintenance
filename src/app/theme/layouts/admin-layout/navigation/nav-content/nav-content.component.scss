@@ -1,11 +1,12 @@
 /* Base Button */
 .btn {
-  --color: #3e4d49;        /* Main green */
+  --color: #198754;
+  /* Main green */
   --color2: rgb(10, 25, 30);
-
-  padding: 0.8em 1.75em;
+  width: 82%;
+  padding: -0.2em 1.75em;
   background-color: transparent;
-  border-radius: 6px;
+  border-radius: 20px;
   border: 1px solid var(--color);
   transition: all 0.3s ease;
   position: relative;

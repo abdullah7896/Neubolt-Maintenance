@@ -40,3 +40,23 @@
   pointer-events: none;
   opacity: 0.5;
 }
+.card {
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-body i {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 8px;
+}
+.custom-primary {
+  background-color: #2e354d !important; /* your color */
+}
+.custom-primaryy {
+  background-color: #a1bdac !important; /* your color */
+}

@@ -5,32 +5,38 @@ import { RouterModule, Routes } from '@angular/router';
 // Project import
 import { AdminComponent } from './theme/layouts/admin-layout/admin-layout.component';
 import { GuestLayoutComponent } from './theme/layouts/guest-layout/guest-layout.component';
+import { AuthGuard } from 'src/app/guards/auth-guard'; // 👈 import guard
 
 const routes: Routes = [
   {
     path: '',
     component: AdminComponent,
+    canActivate: [AuthGuard], // 👈 protect admin layout
     children: [
       {
         path: '',
-        redirectTo: '/dashboard/default',
+        redirectTo: '/login',
         pathMatch: 'full'
       },
       {
         path: 'dashboard/default',
-        loadComponent: () => import('./demo/dashboard/default/default.component').then((c) => c.DefaultComponent)
+        loadComponent: () => import('./demo/dashboard/default/default.component').then((c) => c.DefaultComponent),
+        canActivate: [AuthGuard] // 👈 protect route
       },
       {
         path: 'typography',
-        loadComponent: () => import('./demo/component/basic-component/typography/typography.component').then((c) => c.TypographyComponent)
+        loadComponent: () => import('./demo/component/basic-component/typography/typography.component').then((c) => c.TypographyComponent),
+        canActivate: [AuthGuard]
       },
       {
         path: 'color',
-        loadComponent: () => import('./demo/component/basic-component/color/color.component').then((c) => c.ColorComponent)
+        loadComponent: () => import('./demo/component/basic-component/color/color.component').then((c) => c.ColorComponent),
+        canActivate: [AuthGuard]
       },
       {
         path: 'sample-page',
-        loadComponent: () => import('./demo/others/sample-page/sample-page.component').then((c) => c.SamplePageComponent)
+        loadComponent: () => import('./demo/others/sample-page/sample-page.component').then((c) => c.SamplePageComponent),
+        canActivate: [AuthGuard]
       }
     ]
   },
@@ -44,10 +50,13 @@ const routes: Routes = [
       },
       {
         path: 'register',
-        loadComponent: () =>
-          import('./demo/pages/authentication/auth-register/auth-register.component').then((c) => c.AuthRegisterComponent)
+        loadComponent: () => import('./demo/pages/authentication/auth-register/auth-register.component').then((c) => c.AuthRegisterComponent)
       }
     ]
+  },
+  {
+    path: '**',
+    redirectTo: '/login'
   }
 ];
 

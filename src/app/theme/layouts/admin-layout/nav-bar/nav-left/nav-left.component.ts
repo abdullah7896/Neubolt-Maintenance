@@ -28,7 +28,14 @@ export class NavLeftComponent {
     this.windowWidth = window.innerWidth;
     this.iconService.addIcon(...[MenuUnfoldOutline, MenuFoldOutline, SearchOutline]);
   }
-
+// In NavLeftComponent
+onHamburgerClick() {
+  if (window.innerWidth < 1025) {
+    this.NavCollapsedMob.emit();  // Emits to parent
+  } else {
+    this.NavCollapse.emit();
+  }
+}
   // public method
   navCollapse() {
     this.NavCollapse.emit();

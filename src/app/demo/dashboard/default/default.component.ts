@@ -19,6 +19,13 @@ export class DefaultComponent implements OnInit {
   complaints: Complaint[] = [];
   loading = true;
 
+  // 🧮 Dashboard counts
+  totalCount = 0;
+  inProgressCount = 0;
+  pendingCount = 0;
+  completedCount = 0;
+  requestedCount = 0;
+
   actionStatuses = ['In-Progress', 'Requested'];
   alertMessage: string | null = null;
   alertType: 'success' | 'danger' | null = null;
@@ -34,11 +41,13 @@ export class DefaultComponent implements OnInit {
     this.fetchComplaints();
   }
 
+  // 🔹 Fetch complaints from API
   fetchComplaints() {
     this.loading = true;
     this.complaintsService.getComplaints().subscribe({
       next: (res: any) => {
         this.complaints = Array.isArray(res.maintenance_complaints) ? res.maintenance_complaints : [];
+        this.updateCounts();
         this.loading = false;
       },
       error: (err) => {
@@ -48,15 +57,27 @@ export class DefaultComponent implements OnInit {
     });
   }
 
+  // 🔢 Update summary cards counts
+  updateCounts() {
+    this.totalCount = this.complaints.length;
+    this.inProgressCount = this.complaints.filter(c => c.status === 'In-Progress').length;
+    this.pendingCount = this.complaints.filter(c => c.status === 'Pending').length;
+    this.completedCount = this.complaints.filter(c => c.status === 'Completed').length;
+    this.requestedCount = this.complaints.filter(c => c.status === 'Requested').length;
+  }
+
+  // 🖼️ Get image path
   getDriverImage(driverImage: string): string {
     if (!driverImage) return 'https://via.placeholder.com/30';
     return driverImage.startsWith('http') ? driverImage : `http://203.135.63.46:5000/${driverImage}`;
   }
 
+  // ⚙️ Dropdown logic
   toggleDropdown(complaint: Complaint) {
     this.dropdownOpenComplaintId = this.dropdownOpenComplaintId === complaint.complaint_id ? null : complaint.complaint_id;
   }
 
+  // 🔄 Update complaint status
   updateStatusFromDropdown(complaint: Complaint, newStatus: string) {
     if (complaint.status === 'Completed') {
       this.showAlert('Completed complaints cannot be updated.', 'danger');
@@ -68,11 +89,13 @@ export class DefaultComponent implements OnInit {
     this.dropdownOpenComplaintId = null;
   }
 
+  // 💾 Save status update
   saveStatus(complaint: Complaint) {
     const updatedComplaint: Complaint = { ...complaint, status_change_time: new Date().toISOString() };
     this.complaintsService.updateComplaint(complaint.complaint_id, updatedComplaint).subscribe({
       next: () => {
         complaint.status_change_time = updatedComplaint.status_change_time;
+        this.updateCounts();
         this.showAlert(`Status updated to "${complaint.status}" successfully.`, 'success');
       },
       error: (err) => {
@@ -82,6 +105,7 @@ export class DefaultComponent implements OnInit {
     });
   }
 
+  // 🚨 Alert
   showAlert(message: string, type: 'success' | 'danger') {
     this.alertMessage = message;
     this.alertType = type;
@@ -91,6 +115,7 @@ export class DefaultComponent implements OnInit {
     }, 3000);
   }
 
+  // 🔽 Sorting
   sortTable(column: string, multi = false) {
     if (!multi) {
       if (this.sortConfig.length === 1 && this.sortConfig[0].column === column) {

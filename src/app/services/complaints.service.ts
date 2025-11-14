@@ -1,6 +1,7 @@
+// src/app/services/complaints.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 export interface Complaint {
   complaint_id: string;
@@ -21,17 +22,55 @@ export interface Complaint {
 })
 export class ComplaintsService {
   private baseUrl = 'http://203.135.63.46:5000/neubolt/maintenance';
+  private authUrl = 'http://203.135.63.46:5000/neubolt/auth';
 
   constructor(private http: HttpClient) {}
 
-  // GET complaints
+  // 🔹 LOGIN API
+  login(username: string, password: string): Observable<any> {
+    const body = { username, password };
+    return this.http.post(`${this.authUrl}/login`, body).pipe(
+      tap((response: any) => {
+        // Store token in localStorage after successful login
+        if (response && response.access_token) {
+          localStorage.setItem('accessToken', response.access_token);
+          console.log('✅ Token saved to localStorage');
+        } else {
+          console.error('❌ No access_token found in login response');
+        }
+      })
+    );
+  }
+
+  // 🔹 Helper: Get Headers with Bearer Token
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken');
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  // 🔹 GET Complaints
   getComplaints(): Observable<Complaint[] | Complaint> {
-  return this.http.get<Complaint[] | Complaint>(`${this.baseUrl}/get-compaints`);
-}
+    return this.http.get<Complaint[] | Complaint>(
+      `${this.baseUrl}/get-complaints`, // fixed spelling
+      { headers: this.getAuthHeaders() }
+    );
+  }
 
-
-  // PUT complaint update (status, etc.)
+  // 🔹 UPDATE Complaint
   updateComplaint(complaintId: string, complaintData: Complaint): Observable<Complaint> {
-    return this.http.put<Complaint>(`${this.baseUrl}/put-complaints/${complaintId}`, complaintData);
+    return this.http.put<Complaint>(
+      `${this.baseUrl}/put-complaints/${complaintId}`,
+      complaintData,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // 🔹 LOGOUT Helper
+  logout(): void {
+    localStorage.removeItem('accessToken');
+    console.log('🚪 Logged out and token removed from localStorage');
   }
 }
