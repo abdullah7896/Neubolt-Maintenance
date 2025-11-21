@@ -1,93 +1,104 @@
 <div class="container-fluid">
+
   <!-- 📊 Dashboard Cards -->
-   <h4 class="text-xl font-semibold tracking-wide mb-4">System Monitoring & Service Management Panel</h4>
+  <h4 class="text-xl font-semibold tracking-wide mb-4">
+    System Monitoring & Service Management Panel
+  </h4>
+
   <div class="container-fluid">
-  <div class="row g-3">
-    <!-- Total -->
-    <div class="col-md-2">
-      <div class="card text-white custom-primaryy shadow-sm border-0">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <p class="mb-1 text-light">Total</p>
-            <h4 class="fw-bold mb-0 text-white">{{ totalCount }}</h4>
-          </div>
-          <i class="bi bi-list-ul fs-3 opacity-75"></i>
-        </div>
-      </div>
-    </div>
+    <div class="row g-3">
 
-    <!-- In Progress -->
-    <div class="col-md-2">
-      <div class="card text-white custom-primary shadow-sm border-0">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <p class="mb-1 text-white">In Progress</p>
-            <h4 class="fw-bold mb-0 text-white">{{ inProgressCount }}</h4>
+      <!-- Total -->
+      <div class="col-md-2">
+        <div class="card text-white custom-primaryy shadow-sm border-0">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1 text-light">Total</p>
+              <h4 class="fw-bold mb-0 text-white">{{ totalCount }}</h4>
+            </div>
+            <i class="bi bi-list-ul fs-3 opacity-75"></i>
           </div>
-          <i class="bi bi-gear-fill fs-3 opacity-75"></i>
         </div>
       </div>
-    </div>
 
-    <!-- Pending -->
-    <div class="col-md-2">
-      <div class="card text-dark bg-warning shadow-sm border-0">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <p class="mb-1 text-dark">Pending</p>
-            <h4 class="fw-bold mb-0">{{ pendingCount }}</h4>
+      <!-- In Progress -->
+      <div class="col-md-2">
+        <div class="card text-white custom-primary shadow-sm border-0">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1 text-white">In Progress</p>
+              <h4 class="fw-bold mb-0 text-white">{{ inProgressCount }}</h4>
+            </div>
+            <i class="bi bi-gear-fill fs-3 opacity-75"></i>
           </div>
-          <i class="bi bi-hourglass-split fs-3 opacity-75"></i>
         </div>
       </div>
-    </div>
 
-    <!-- Completed -->
-    <div class="col-md-2">
-      <div class="card text-white bg-success shadow-sm border-0">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <p class="mb-1 text-light">Completed</p>
-            <h4 class="fw-bold mb-0">{{ completedCount }}</h4>
+      <!-- Pending -->
+      <div class="col-md-2">
+        <div class="card text-dark bg-warning shadow-sm border-0">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1">Pending</p>
+              <h4 class="fw-bold mb-0">{{ pendingCount }}</h4>
+            </div>
+            <i class="bi bi-hourglass-split fs-3 opacity-75"></i>
           </div>
-          <i class="bi bi-check-circle-fill fs-3 opacity-75"></i>
         </div>
       </div>
-    </div>
 
-    <!-- Requested -->
-    <div class="col-md-2">
-      <div class="card text-white bg-secondary shadow-sm border-0">
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <p class="mb-1 text-light">Requested</p>
-            <h4 class="fw-bold mb-0">{{ requestedCount }}</h4>
+      <!-- Completed -->
+      <div class="col-md-2">
+        <div class="card text-white bg-success shadow-sm border-0">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1">Completed</p>
+              <h4 class="fw-bold mb-0">{{ completedCount }}</h4>
+            </div>
+            <i class="bi bi-check-circle-fill fs-3 opacity-75"></i>
           </div>
-          <i class="bi bi-envelope-paper-fill fs-3 opacity-75"></i>
         </div>
       </div>
+
+      <!-- Requested -->
+      <div class="col-md-2">
+        <div class="card text-white bg-secondary shadow-sm border-0">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <p class="mb-1">Requested</p>
+              <h4 class="fw-bold mb-0">{{ requestedCount }}</h4>
+            </div>
+            <i class="bi bi-envelope-paper-fill fs-3 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-</div>
-
 
   <!-- 📋 Complaint Table -->
-  <div class="row">
+  <div class="row mt-4">
     <div class="col-md-12 col-xl-10">
+
       <h5 class="mb-3">Maintenance Complaints</h5>
 
-      <div *ngIf="alertMessage" class="alert alert-{{alertType}} alert-dismissible fade show" role="alert">
+      <div *ngIf="alertMessage" class="alert alert-{{alertType}} alert-dismissible fade show">
         {{ alertMessage }}
-        <button type="button" class="btn-close" (click)="alertMessage=null"></button>
+        <button type="button" class="btn-close" (click)="alertMessage = null"></button>
       </div>
 
       <div class="card tbl-card">
+
         <div class="table-responsive">
           <table class="table table-hover mb-0">
             <thead>
               <tr>
-                <th (click)="sortTable('complaint_id')">Complaint ID {{ getSortIcon('complaint_id') || '↕' }}</th>
-                <th (click)="sortTable('complaint_name')">Complaint Name {{ getSortIcon('complaint_name') || '↕' }}</th>
+                <th (click)="sortTable('complaint_id')">
+                  Complaint ID {{ getSortIcon('complaint_id') || '↕' }}
+                </th>
+                <th (click)="sortTable('complaint_name')">
+                  Complaint Name {{ getSortIcon('complaint_name') || '↕' }}
+                </th>
                 <th>Status</th>
                 <th>Driver</th>
                 <th>EV ID</th>
@@ -100,7 +111,7 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let complaint of complaints">
+              <tr *ngFor="let complaint of paginatedComplaints">
                 <td>{{ complaint.complaint_id }}</td>
                 <td>{{ complaint.complaint_name }}</td>
                 <td>
@@ -115,7 +126,9 @@
                   </span>
                 </td>
                 <td>
-                  <img [src]="getDriverImage(complaint.driver_image)" width="40" height="40" class="rounded-circle me-2">
+                  <img [src]="getDriverImage(complaint.driver_image)"
+                       width="40" height="40"
+                       class="rounded-circle me-2">
                   {{ complaint.driver_name }}
                 </td>
                 <td>{{ complaint.ev_id }}</td>
@@ -125,32 +138,55 @@
                 <td>{{ complaint.status_change_time | date:'short' }}</td>
                 <td>
                   <div class="position-relative">
-                    <img src="assets/images/icons.png" alt="Actions" width="20" height="20" style="cursor:pointer;"
+                    <img src="assets/images/icons.png"
+                         width="20" height="20"
+                         style="cursor:pointer;"
                          (click)="toggleDropdown(complaint)">
-                    <div class="dropdown-menu" [class.show]="dropdownOpenComplaintId === complaint.complaint_id"
-                         style="position:absolute;top:100%;right:0;z-index:1000;">
+                    
+                    <div class="dropdown-menu"
+                         [class.show]="dropdownOpenComplaintId === complaint.complaint_id"
+                         style="position:absolute; top:100%; right:0;">
+
                       <div *ngFor="let s of actionStatuses"
                            class="dropdown-item"
                            [class.disabled]="complaint.status === s"
                            (click)="complaint.status !== s && updateStatusFromDropdown(complaint, s)">
                         {{ s }}
                       </div>
+
                     </div>
                   </div>
                 </td>
               </tr>
 
-              <tr *ngIf="!loading && complaints.length === 0">
+              <tr *ngIf="!loading && paginatedComplaints.length === 0">
                 <td colspan="10" class="text-center">No complaints found.</td>
               </tr>
+
             </tbody>
           </table>
 
-          <div *ngIf="loading" class="p-3 text-center">
-            Loading complaints...
-          </div>
+          <div *ngIf="loading" class="p-3 text-center">Loading complaints...</div>
+
         </div>
+
+        <!-- 🔵 PAGINATION -->
+        <div class="pagination-container mt-3">
+          <ul class="custom-pagination">
+            <li [class.disabled]="currentPage === 1" (click)="previousPage()">Prev</li>
+
+            <li *ngFor="let p of totalPagesArr"
+                [class.active]="currentPage === p"
+                (click)="goToPage(p)">
+              {{ p }}
+            </li>
+
+            <li [class.disabled]="currentPage === totalPages" (click)="nextPage()">Next</li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </div>
+
 </div>
