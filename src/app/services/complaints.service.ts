@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-
+import { environment } from '../../environments/environment';
 export interface Complaint {
   complaint_id: string;
   complaint_name: string;
@@ -21,9 +21,8 @@ export interface Complaint {
   providedIn: 'root'
 })
 export class ComplaintsService {
-  private baseUrl = 'http://203.135.63.46:5000/neubolt/maintenance';
-  private authUrl = 'http://203.135.63.46:5000/neubolt/auth';
-
+  private baseUrl = `${environment.apiUrl}/maintenance`;
+private authUrl = `${environment.apiUrl}/auth`;
   constructor(private http: HttpClient) {}
 
   // 🔹 LOGIN API
